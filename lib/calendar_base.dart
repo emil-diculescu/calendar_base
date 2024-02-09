@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 typedef DateToWidgetBuilder = Widget Function(BuildContext, DateTime);
 typedef IntToWidgetBuilder = Widget Function(BuildContext, int);
+typedef StringToWidgetBuilder = Widget Function(BuildContext, String);
 
 @visibleForTesting
 class CalendarViewParameters extends InheritedWidget {
@@ -19,6 +20,8 @@ class CalendarViewParameters extends InheritedWidget {
 
   final IntToWidgetBuilder? weekNumberBuilder;
 
+  final StringToWidgetBuilder? weekDayNameBuilder;
+
   // final double minMonthViewWidth;
 
   // final double maxMonthViewWidth;
@@ -31,6 +34,7 @@ class CalendarViewParameters extends InheritedWidget {
       {super.key,
       this.dayBuilder,
       this.weekNumberBuilder,
+      this.weekDayNameBuilder,
       // required this.minMonthViewWidth,
       // required this.maxMonthViewWidth,
       // required this.initialDate,
@@ -40,6 +44,28 @@ class CalendarViewParameters extends InheritedWidget {
   @override
   bool updateShouldNotify(covariant CalendarViewParameters oldWidget) {
     return false;
+  }
+}
+
+@visibleForTesting
+class WeekDayName extends StatelessWidget {
+  final int dayIndex;
+
+  const WeekDayName({required this.dayIndex, super.key}) : assert(dayIndex >= 0 && dayIndex < 7);
+
+  @override
+  Widget build(BuildContext context) {
+    final weekDayName = CalendarViewParameters.of(context).localizations.narrowWeekdays[dayIndex];
+    final builder = CalendarViewParameters.of(context).weekDayNameBuilder ?? _defaultWidget;
+    return builder(context, weekDayName);
+  }
+
+  Widget _defaultWidget(BuildContext context, String weekDayName) {
+    return Center(
+        child: Text(
+      weekDayName,
+      style: Theme.of(context).textTheme.labelSmall,
+    ));
   }
 }
 

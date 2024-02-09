@@ -108,4 +108,39 @@ class MockBuilders extends _i1.Mock implements _i3.Builders {
           ),
         ),
       ) as _i2.Widget);
+
+  @override
+  _i2.Widget weekDayNameBuilder(
+    _i2.BuildContext? context,
+    String? weekDayName,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #weekDayNameBuilder,
+          [
+            context,
+            weekDayName,
+          ],
+        ),
+        returnValue: _FakeWidget_0(
+          this,
+          Invocation.method(
+            #weekDayNameBuilder,
+            [
+              context,
+              weekDayName,
+            ],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWidget_0(
+          this,
+          Invocation.method(
+            #weekDayNameBuilder,
+            [
+              context,
+              weekDayName,
+            ],
+          ),
+        ),
+      ) as _i2.Widget);
 }
