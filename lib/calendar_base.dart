@@ -56,15 +56,25 @@ class WeekDayName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final weekDayName = CalendarViewParameters.of(context).localizations.narrowWeekdays[dayIndex];
-    final builder = CalendarViewParameters.of(context).weekDayNameBuilder ?? _defaultWidget;
-    return builder(context, weekDayName);
+    final builder = CalendarViewParameters.of(context).weekDayNameBuilder;
+    if (builder != null) {
+      return builder(context, weekDayName);
+    } else {
+      return _CenteredText(text: weekDayName);
+    }
   }
+}
 
-  Widget _defaultWidget(BuildContext context, String weekDayName) {
+class _CenteredText extends StatelessWidget {
+  final String text;
+
+  const _CenteredText({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
         child: Text(
-      weekDayName,
-      style: Theme.of(context).textTheme.labelSmall,
+      text,
     ));
   }
 }
