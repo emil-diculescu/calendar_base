@@ -104,11 +104,22 @@ class Day extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final builder = CalendarViewParameters.of(context).dayBuilder ?? _defaultWidget;
-    return builder(context, date);
+    final builder = CalendarViewParameters.of(context).dayBuilder;
+    if (builder != null) {
+      return builder(context, date);
+    } else {
+      return _DefaultDay(day: date.day);
+    }
   }
+}
 
-  Widget _defaultWidget(BuildContext _, DateTime date) {
-    return Center(child: Text((date.day.toString())));
+class _DefaultDay extends StatelessWidget {
+  final int day;
+
+  const _DefaultDay({required this.day});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text((day.toString())));
   }
 }
