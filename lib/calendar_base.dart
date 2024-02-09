@@ -77,13 +77,13 @@ class WeekNumber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final builder = CalendarViewParameters.of(context).weekNumberBuilder ?? _defaultWidget;
     final weekNumber = _weekNumber(CalendarViewParameters.of(context).localizations);
-    return builder(context, weekNumber);
-  }
-
-  Widget _defaultWidget(BuildContext _, int weekNumber) {
-    return Center(child: Text(weekNumber.toString()));
+    final builder = CalendarViewParameters.of(context).weekNumberBuilder;
+    if (builder != null) {
+      return builder(context, weekNumber);
+    } else {
+      return _DefaultWeekNumber(weekNumber: weekNumber);
+    }
   }
 
   int _weekNumber(MaterialLocalizations localizations) {
@@ -94,6 +94,17 @@ class WeekNumber extends StatelessWidget {
     final weekNumber = (difference / 7).floor() + 1;
     assert(weekNumber > 0 && weekNumber <= 53);
     return weekNumber;
+  }
+}
+
+class _DefaultWeekNumber extends StatelessWidget {
+  final int weekNumber;
+
+  const _DefaultWeekNumber({required this.weekNumber});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text(weekNumber.toString()));
   }
 }
 
