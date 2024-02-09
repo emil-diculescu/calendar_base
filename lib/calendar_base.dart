@@ -92,7 +92,7 @@ class WeekNumber extends StatelessWidget {
     if (builder != null) {
       return builder(context, weekNumber);
     } else {
-      return _DefaultWeekNumber(weekNumber: weekNumber);
+      return _CenteredText(text: weekNumber.toString());
     }
   }
 
@@ -107,17 +107,6 @@ class WeekNumber extends StatelessWidget {
   }
 }
 
-class _DefaultWeekNumber extends StatelessWidget {
-  final int weekNumber;
-
-  const _DefaultWeekNumber({required this.weekNumber});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(weekNumber.toString()));
-  }
-}
-
 @visibleForTesting
 class Day extends StatelessWidget {
   final DateTime date;
@@ -129,18 +118,7 @@ class Day extends StatelessWidget {
     if (builder != null) {
       return builder(context, date);
     } else {
-      return _DefaultDay(day: date.day);
+      return _CenteredText(text: date.day.toString());
     }
-  }
-}
-
-class _DefaultDay extends StatelessWidget {
-  final int day;
-
-  const _DefaultDay({required this.day});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text((day.toString())));
   }
 }
