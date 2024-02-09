@@ -2,6 +2,9 @@ library calendar_base;
 
 import 'package:flutter/material.dart';
 
+typedef DateToWidgetBuilder = Widget Function(BuildContext, DateTime);
+typedef IntToWidgetBuilder = Widget Function(BuildContext, int);
+
 @visibleForTesting
 class CalendarViewParameters extends InheritedWidget {
   static CalendarViewParameters? maybeOf(BuildContext context) {
@@ -12,7 +15,9 @@ class CalendarViewParameters extends InheritedWidget {
     return maybeOf(context)!;
   }
 
-  final Widget Function(BuildContext context, DateTime date)? dayBuilder;
+  final DateToWidgetBuilder? dayBuilder;
+
+  final IntToWidgetBuilder? weekNumberBuilder;
 
   // final double minMonthViewWidth;
 
@@ -25,6 +30,7 @@ class CalendarViewParameters extends InheritedWidget {
   const CalendarViewParameters(
       {super.key,
       this.dayBuilder,
+      this.weekNumberBuilder,
       // required this.minMonthViewWidth,
       // required this.maxMonthViewWidth,
       // required this.initialDate,
@@ -45,13 +51,23 @@ class WeekNumber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final start = DateTime.utc(date.year, date.month, date.day);
-    final firstOfJanuaryOffset =
-        DateUtils.firstDayOffset(date.year, 1, CalendarViewParameters.of(context).localizations);
-    final end = DateTime.utc(date.year, 1, 1).subtract(Duration(days: firstOfJanuaryOffset));
-    final difference = start.difference(end).inDays;
-    final weeksDifference = difference / 7;
-    return Center(child: Text((weeksDifference.floor() + 1).toString()));
+    final builder = CalendarViewParameters.of(context).weekNumberBuilder ?? _defaultWidget;
+    final weekNumber = _weekNumber(CalendarViewParameters.of(context).localizations);
+    return builder(context, weekNumber);
+  }
+
+  Widget _defaultWidget(BuildContext _, int weekNumber) {
+    return Center(child: Text(weekNumber.toString()));
+  }
+
+  int _weekNumber(MaterialLocalizations localizations) {
+    final target = DateTime.utc(date.year, date.month, date.day);
+    final firstOfJanuaryOffset = DateUtils.firstDayOffset(date.year, 1, localizations);
+    final reference = DateTime.utc(date.year, 1, 1).subtract(Duration(days: firstOfJanuaryOffset));
+    final difference = target.difference(reference).inDays;
+    final weekNumber = (difference / 7).floor() + 1;
+    assert(weekNumber > 0 && weekNumber <= 53);
+    return weekNumber;
   }
 }
 
@@ -66,7 +82,7 @@ class Day extends StatelessWidget {
     return builder(context, date);
   }
 
-  Widget _defaultWidget(BuildContext context, DateTime date) {
+  Widget _defaultWidget(BuildContext _, DateTime date) {
     return Center(child: Text((date.day.toString())));
   }
 }

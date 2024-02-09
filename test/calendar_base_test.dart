@@ -14,9 +14,7 @@ void main() {
   group('Day tests', () {
     final DateTime testDate = _today();
 
-    setUp(() {
-      when(_builders.dayBuilder(any, any)).thenReturn(_stubWidget);
-    });
+    setUpAll(() => when(_builders.dayBuilder(any, any)).thenReturn(_stubWidget));
 
     testWidgets('Displays the day by default', (widgetTester) async {
       await widgetTester.pumpWidget(_widgetWithoutBuilders(Day(date: testDate)));
@@ -31,17 +29,28 @@ void main() {
   });
 
   group('Week number tests', () {
+    const expectedWeekNumber = 6;
+    final testDate = DateUtils.dateOnly(DateTime(2024, 2, 9));
+
+    setUpAll(() => when(_builders.weekNumberBuilder(any, any)).thenReturn(_stubWidget));
+
     testWidgets('Displays week number by default', (widgetTester) async {
-      const expectedWeekNumber = 6;
-      final testDate = DateUtils.dateOnly(DateTime(2024, 2, 9));
       await widgetTester.pumpWidget(_widgetWithoutBuilders(WeekNumber(date: testDate)));
       expect(find.text(expectedWeekNumber.toString()), findsOneWidget);
+    });
+
+    testWidgets('Calls builder, if builder is provided', (widgetTester) async {
+      await widgetTester.pumpWidget(_widgetWithBuilders(WeekNumber(date: testDate)));
+      verify(_builders.weekNumberBuilder(any, expectedWeekNumber));
+      expect(widgetTester.widget(find.bySubtype<Placeholder>()), _stubWidget);
     });
   });
 }
 
 abstract class Builders {
   Widget dayBuilder(BuildContext context, DateTime date);
+
+  Widget weekNumberBuilder(BuildContext context, int weekNumber);
 }
 
 DateTime _today() {
@@ -57,6 +66,7 @@ Widget _widgetWithoutBuilders(Widget child) {
 Widget _widgetWithBuilders(Widget child) {
   return CalendarViewParameters(
       dayBuilder: _builders.dayBuilder,
+      weekNumberBuilder: _builders.weekNumberBuilder,
       localizations: const DefaultMaterialLocalizations(),
       child: Directionality(textDirection: TextDirection.ltr, child: child));
 }

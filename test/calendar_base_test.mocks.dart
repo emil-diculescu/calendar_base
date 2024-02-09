@@ -73,4 +73,39 @@ class MockBuilders extends _i1.Mock implements _i3.Builders {
           ),
         ),
       ) as _i2.Widget);
+
+  @override
+  _i2.Widget weekNumberBuilder(
+    _i2.BuildContext? context,
+    int? weekNumber,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #weekNumberBuilder,
+          [
+            context,
+            weekNumber,
+          ],
+        ),
+        returnValue: _FakeWidget_0(
+          this,
+          Invocation.method(
+            #weekNumberBuilder,
+            [
+              context,
+              weekNumber,
+            ],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWidget_0(
+          this,
+          Invocation.method(
+            #weekNumberBuilder,
+            [
+              context,
+              weekNumber,
+            ],
+          ),
+        ),
+      ) as _i2.Widget);
 }
