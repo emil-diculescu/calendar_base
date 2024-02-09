@@ -20,7 +20,7 @@ class CalendarViewParameters extends InheritedWidget {
 
   // final DateTime initialDate;
 
-  // final MaterialLocalizations localizations;
+  final MaterialLocalizations localizations;
 
   const CalendarViewParameters(
       {super.key,
@@ -28,16 +28,30 @@ class CalendarViewParameters extends InheritedWidget {
       // required this.minMonthViewWidth,
       // required this.maxMonthViewWidth,
       // required this.initialDate,
-      // required this.localizations,
+      required this.localizations,
       required super.child});
 
   @override
   bool updateShouldNotify(covariant CalendarViewParameters oldWidget) {
-    // return minMonthViewWidth != oldWidget.minMonthViewWidth ||
-    //     maxMonthViewWidth != oldWidget.maxMonthViewWidth ||
-    //     !DateUtils.isSameDay(initialDate, oldWidget.initialDate) ||
-    //     localizations != oldWidget.localizations;
     return false;
+  }
+}
+
+@visibleForTesting
+class WeekNumber extends StatelessWidget {
+  final DateTime date;
+
+  const WeekNumber({super.key, required this.date});
+
+  @override
+  Widget build(BuildContext context) {
+    final start = DateTime.utc(date.year, date.month, date.day);
+    final firstOfJanuaryOffset =
+        DateUtils.firstDayOffset(date.year, 1, CalendarViewParameters.of(context).localizations);
+    final end = DateTime.utc(date.year, 1, 1).subtract(Duration(days: firstOfJanuaryOffset));
+    final difference = start.difference(end).inDays;
+    final weeksDifference = difference / 7;
+    return Center(child: Text((weeksDifference.floor() + 1).toString()));
   }
 }
 

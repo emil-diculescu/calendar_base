@@ -29,6 +29,15 @@ void main() {
       expect(widgetTester.widget(find.bySubtype<Placeholder>()), _stubWidget);
     });
   });
+
+  group('Week number tests', () {
+    testWidgets('Displays week number by default', (widgetTester) async {
+      const expectedWeekNumber = 6;
+      final testDate = DateUtils.dateOnly(DateTime(2024, 2, 9));
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(WeekNumber(date: testDate)));
+      expect(find.text(expectedWeekNumber.toString()), findsOneWidget);
+    });
+  });
 }
 
 abstract class Builders {
@@ -40,10 +49,14 @@ DateTime _today() {
 }
 
 Widget _widgetWithoutBuilders(Widget child) {
-  return CalendarViewParameters(child: Directionality(textDirection: TextDirection.ltr, child: child));
+  return CalendarViewParameters(
+      localizations: const DefaultMaterialLocalizations(),
+      child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
 
 Widget _widgetWithBuilders(Widget child) {
   return CalendarViewParameters(
-      dayBuilder: _builders.dayBuilder, child: Directionality(textDirection: TextDirection.ltr, child: child));
+      dayBuilder: _builders.dayBuilder,
+      localizations: const DefaultMaterialLocalizations(),
+      child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
