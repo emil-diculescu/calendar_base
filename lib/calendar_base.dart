@@ -24,9 +24,13 @@ class CalendarViewParameters extends InheritedWidget {
 
   final DateToWidgetBuilder? monthNameBuilder;
 
-  // final double minMonthViewWidth;
+  final double minMonthViewWidth;
 
-  // final double maxMonthViewWidth;
+  final double maxMonthViewWidth;
+
+  final double minHorizontalSpacing;
+
+  final double minVerticalSpacing;
 
   // final DateTime initialDate;
 
@@ -34,19 +38,51 @@ class CalendarViewParameters extends InheritedWidget {
 
   const CalendarViewParameters(
       {super.key,
+      // required this.initialDate,
+      required this.localizations,
       this.dayBuilder,
       this.weekNumberBuilder,
       this.weekDayNameBuilder,
       this.monthNameBuilder,
-      // required this.minMonthViewWidth,
-      // required this.maxMonthViewWidth,
-      // required this.initialDate,
-      required this.localizations,
+      this.minMonthViewWidth = 200,
+      this.maxMonthViewWidth = double.infinity,
+      this.minHorizontalSpacing = 0,
+      this.minVerticalSpacing = 0,
       required super.child});
 
   @override
   bool updateShouldNotify(covariant CalendarViewParameters oldWidget) {
     return false;
+  }
+}
+
+@visibleForTesting
+class CalendarRow extends StatelessWidget {
+  final int rowIndex;
+
+  const CalendarRow({required this.rowIndex, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final parameters = CalendarViewParameters.of(context);
+    return LayoutBuilder(builder: (layoutBuilderContext, constraints) {
+      //   final columns = (constraints.maxWidth / parameters.maxMonthViewWidth).floor();
+      final columns = 1;
+      //   final firstDateOfRow = DateUtils.addMonthsToMonthDate(parameters.initialDate, rowIndex * columns);
+      final children = <Widget>[];
+      for (var i = 0; i < columns; ++i) {
+        //final displayDate = DateUtils.addMonthsToMonthDate(firstDateOfRow, i);
+        final displayDate = DateUtils.addMonthsToMonthDate(DateTime(1900, 1, 1), i);
+        children.add(ConstrainedBox(
+            constraints: BoxConstraints(minWidth: parameters.minMonthViewWidth, maxWidth: parameters.maxMonthViewWidth),
+            child: MonthView(date: displayDate)));
+      }
+      return Row(
+        // mainAxisAlignment: MainAxisAlignment.center,
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      );
+    });
   }
 }
 

@@ -9,6 +9,10 @@ import 'package:mockito/mockito.dart';
 import 'calendar_base_test.mocks.dart';
 
 const _localizations = DefaultMaterialLocalizations();
+const _minColumnWidth = 200.0;
+const _maxColumnWidth = 400.0;
+const _minHorizontalSpacing = 16.0;
+const _minVerticalSpacing = 16.0;
 const _stubWidget = Placeholder();
 final MockBuilders _builders = MockBuilders();
 
@@ -137,6 +141,15 @@ void main() {
       expect(find.bySubtype<WeeksInMonthView>(), findsOneWidget);
     });
   });
+
+  group('Calendar row testing', () {
+    testWidgets('Shows one column when space is smaller than two minimum widths', (widgetTester) async {
+      await widgetTester.pumpWidget(_constrainedWidget(
+          width: 2 * _minColumnWidth + 3 * _minHorizontalSpacing - 1,
+          child: _widgetWithoutBuilders(const CalendarRow(rowIndex: 0))));
+      expect(find.bySubtype<MonthView>(), findsExactly(1));
+    });
+  });
 }
 
 abstract class Builders {
@@ -155,7 +168,12 @@ DateTime _today() {
 
 Widget _widgetWithoutBuilders(Widget child) {
   return CalendarViewParameters(
-      localizations: _localizations, child: Directionality(textDirection: TextDirection.ltr, child: child));
+      localizations: _localizations,
+      minMonthViewWidth: _minColumnWidth,
+      maxMonthViewWidth: _maxColumnWidth,
+      minHorizontalSpacing: _minHorizontalSpacing,
+      minVerticalSpacing: _minVerticalSpacing,
+      child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
 
 Widget _widgetWithBuilders(Widget child) {
@@ -165,6 +183,10 @@ Widget _widgetWithBuilders(Widget child) {
       weekDayNameBuilder: _builders.weekDayNameBuilder,
       monthNameBuilder: _builders.monthNameBuilder,
       localizations: _localizations,
+      minMonthViewWidth: _minColumnWidth,
+      maxMonthViewWidth: _maxColumnWidth,
+      minHorizontalSpacing: _minHorizontalSpacing,
+      minVerticalSpacing: _minVerticalSpacing,
       child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
 
@@ -233,4 +255,14 @@ class _IndividualMonthTester {
   void testNoMoreRows({required int expectedRowCount}) {
     expect(rows.length, expectedRowCount);
   }
+}
+
+Widget _constrainedWidget({required width, required Widget child}) {
+  return ConstrainedBox(
+    constraints: BoxConstraints(
+      minWidth: width,
+      maxWidth: width,
+    ),
+    child: child,
+  );
 }
