@@ -76,6 +76,8 @@ void main() {
       tester.testWeek(expectedRowNumber: 2, weekNumber: 37, startsWith: 8, endsWith: 14);
       tester.testWeek(expectedRowNumber: 3, weekNumber: 38, startsWith: 15, endsWith: 21);
       tester.testWeek(expectedRowNumber: 4, weekNumber: 39, startsWith: 22, endsWith: 28);
+      tester.testWeek(expectedRowNumber: 5, weekNumber: 40, startsWith: 29, endsWith: 30);
+      tester.testNoMoreRows(expectedRowCount: 6);
     });
   });
 }
@@ -125,7 +127,7 @@ class _IndividualMonthTester {
   }
 
   void testRow({required int rowNumber, required List<String> expected}) {
-    assert(rowNumber >= 0 && rowNumber < rows.length);
+    assert(rowNumber >= 0 && rowNumber < rows.length, 'Row number: $rowNumber');
     final row = rows[rowNumber].children;
     expect(row.length, expected.length, reason: 'The actual and expected lists have different lengths');
     for (var i = 0; i < row.length; ++i) {
@@ -135,7 +137,7 @@ class _IndividualMonthTester {
 
   String _textFrom(Widget widget) {
     final finder = find.descendant(of: find.byWidget(widget), matching: find.bySubtype<Text>());
-    final textWidget = widgetTester.widget<Text>(finder);
+    final textWidget = widgetTester.widget<Text>(finder.first);
     return textWidget.data!.trim();
   }
 
@@ -146,9 +148,26 @@ class _IndividualMonthTester {
     assert(endsWith >= startsWith && endsWith <= 31);
     final expected = <String>[];
     expected.add(weekNumber.toString());
+    final daysInWeek = endsWith - startsWith + 1;
+    final isNotFullWeek = daysInWeek != 6;
+    final isFirstWeekOfMonth = startsWith == 1;
+    if (isNotFullWeek && isFirstWeekOfMonth) {
+      _padWithEmpty(expected, daysInWeek);
+    }
     for (var i = startsWith; i <= endsWith; ++i) {
       expected.add(i.toString());
     }
+    if (isNotFullWeek && !isFirstWeekOfMonth) {
+      _padWithEmpty(expected, daysInWeek);
+    }
     return testRow(rowNumber: expectedRowNumber, expected: expected);
+  }
+
+  void _padWithEmpty(List<String> expected, int daysInWeek) {
+    expected.addAll(List.filled(7 - daysInWeek, ''));
+  }
+
+  void testNoMoreRows({required int expectedRowCount}) {
+    expect(rows.length, expectedRowCount);
   }
 }

@@ -68,9 +68,7 @@ class _RowGenerator {
   final BuildContext context;
   final DateTime displayDate;
   late final CalendarViewParameters _parameters;
-
   late final int _firstDayOffset;
-
   late final int _firstRegularDay;
   late final int _daysOnFirstRow;
   late final int _daysInCurrentMonth;
@@ -98,7 +96,8 @@ class _RowGenerator {
     _addDayOfWeekNames();
     _addFirstWeekOfMonth();
     _addFullWeeks();
-    // if (_isLastWeekIncomplete()) _addDaysOfLastWeek();
+    // if (_isLastWeekIncomplete())
+    _addDaysOfLastWeek();
     return _children;
   }
 
@@ -169,15 +168,15 @@ class _RowGenerator {
   bool _isLastWeekIncomplete() => false; // _daysOnLastRow != 0;
 
   void _addDaysOfLastWeek() {
-    // final currentRow = <Widget>[];
-    // currentRow.add(WeekNumber(date: displayDate.copyWith(day: _daysInCurrentMonth)));
-    // for (var i = _daysInCurrentMonth - _daysOnLastRow + 1; i <= _daysInCurrentMonth; ++i) {
-    //   currentRow.add(Day(day: i));
-    // }
-    // for (var i = _daysOnLastRow; i < 7; ++i) {
-    //   currentRow.add(const Empty());
-    // }
-    // _children.add(TableRow(children: currentRow));
+    final currentRow = <Widget>[];
+    currentRow.add(WeekNumber(date: displayDate.copyWith(day: _daysInCurrentMonth)));
+    for (var i = _daysInCurrentMonth - _daysOnLastRow + 1; i <= _daysInCurrentMonth; ++i) {
+      currentRow.add(Day(date: displayDate.copyWith(day: i)));
+    }
+    for (var i = _daysOnLastRow; i < 7; ++i) {
+      currentRow.add(const _Empty());
+    }
+    _children.add(TableRow(children: currentRow));
   }
 }
 
