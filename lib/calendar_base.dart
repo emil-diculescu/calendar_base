@@ -71,19 +71,20 @@ class CalendarRow extends StatelessWidget {
       final columns = ((constraints.maxWidth - parameters.minHorizontalSpacing) /
               (parameters.minMonthViewWidth + parameters.minHorizontalSpacing))
           .floor();
-      final availableMaxWidth = (constraints.maxWidth - (columns + 1) * parameters.minHorizontalSpacing) / columns;
+      final availableColumnWidth = (constraints.maxWidth - (columns + 1) * parameters.minHorizontalSpacing) / columns;
       final firstDateOfRow = DateUtils.addMonthsToMonthDate(parameters.initialDate, rowIndex * columns);
       final children = <Widget>[];
       for (var i = 0; i < columns; ++i) {
         final displayDate = DateUtils.addMonthsToMonthDate(firstDateOfRow, i);
         children.add(ConstrainedBox(
             constraints: BoxConstraints(
-                minWidth: parameters.minMonthViewWidth, maxWidth: min(availableMaxWidth, parameters.maxMonthViewWidth)),
+                minWidth: parameters.minMonthViewWidth,
+                maxWidth: min(availableColumnWidth, parameters.maxMonthViewWidth)),
             child: MonthView(date: displayDate)));
       }
       return Row(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: children,
       );
     });

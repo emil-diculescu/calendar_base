@@ -148,39 +148,35 @@ void main() {
     }
 
     testWidgets('Shows one column when space is smaller than two minimum widths', (widgetTester) async {
-      await widgetTester.pumpWidget(await _constrainedWidget(
-          widgetTester: widgetTester,
-          width: enoughWidthFor(columns: 1),
-          child: _widgetWithoutBuilders(const CalendarRow(rowIndex: 0))));
+      await widgetTester.binding.setSurfaceSize(Size(enoughWidthFor(columns: 1), 600));
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(const CalendarRow(rowIndex: 0)));
       expect(find.bySubtype<MonthView>(), findsExactly(1));
     });
 
     testWidgets('Shows more columns if space is available', (widgetTester) async {
       const maxColumns = 5;
       final expectedColumns = 2 + Random().nextInt(maxColumns - 1);
-      await widgetTester.pumpWidget(await _constrainedWidget(
-          widgetTester: widgetTester,
-          width: enoughWidthFor(columns: expectedColumns),
-          child: _widgetWithoutBuilders(const CalendarRow(rowIndex: 0))));
+      await widgetTester.binding.setSurfaceSize(Size(enoughWidthFor(columns: expectedColumns), 600));
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(const CalendarRow(rowIndex: 0)));
       expect(find.bySubtype<MonthView>(), findsExactly(expectedColumns));
     });
 
     testWidgets('Shows the correct months', (widgetTester) async {
       final random = Random();
       final expectedColumns = 2 + random.nextInt(5);
+      await widgetTester.binding.setSurfaceSize(Size(enoughWidthFor(columns: expectedColumns), 600));
       final testDate = DateTime.now();
       final row = 0 + random.nextInt(5);
       final offset = row * expectedColumns;
-      await widgetTester.pumpWidget(await _constrainedWidget(
-          widgetTester: widgetTester,
-          width: enoughWidthFor(columns: expectedColumns),
-          child: _widgetWithoutBuilders(CalendarRow(rowIndex: row))));
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(CalendarRow(rowIndex: row)));
       for (var i = 0; i < expectedColumns; ++i) {
         expect(find.text(_localizations.formatMonthYear(DateUtils.addMonthsToMonthDate(testDate, offset + i))),
             findsOneWidget);
       }
     });
   });
+
+  group('Calendar testing', () {});
 }
 
 abstract class Builders {
@@ -288,15 +284,4 @@ class _IndividualMonthTester {
   void testNoMoreRows({required int expectedRowCount}) {
     expect(rows.length, expectedRowCount);
   }
-}
-
-Future<Widget> _constrainedWidget({required WidgetTester widgetTester, required width, required Widget child}) async {
-  await widgetTester.binding.setSurfaceSize(Size(width, 600));
-  return ConstrainedBox(
-    constraints: BoxConstraints(
-      minWidth: width,
-      maxWidth: width,
-    ),
-    child: child,
-  );
 }
