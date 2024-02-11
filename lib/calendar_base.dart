@@ -48,6 +48,138 @@ class CalendarViewParameters extends InheritedWidget {
 }
 
 @visibleForTesting
+class WeeksInMonthView extends StatelessWidget {
+  final DateTime displayDate;
+
+  const WeeksInMonthView(this.displayDate, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final generator = _RowGenerator(context: context, displayDate: displayDate);
+    return Table(
+      children: generator.rows,
+    );
+  }
+}
+
+class _RowGenerator {
+  final List<TableRow> _children = <TableRow>[];
+  final BuildContext context;
+  final DateTime displayDate;
+  late final CalendarViewParameters _parameters;
+  // late final int _firstDayOffset;
+  // late final int _firstRegularDay;
+  // late final int _daysOnFirstRow;
+  // late final int _daysInCurrentMonth;
+  // late final int _remainingDaysInMonth;
+  // late final int _daysOnLastRow;
+  // late final int _lastRegularDay;
+
+  late final List<TableRow> rows = _generateRows();
+
+  _RowGenerator({required this.context, required this.displayDate}) : _parameters = CalendarViewParameters.of(context);
+  //   _daysInCurrentMonth = DateUtils.getDaysInMonth(displayDate.year, displayDate.month) {
+  // _firstDayOffset = DateUtils.firstDayOffset(displayDate.year, displayDate.month, _parameters.localizations);
+  // _firstRegularDay = 7 - _firstDayOffset + 1;
+  // _daysOnFirstRow = 7 - _firstDayOffset;
+  // _remainingDaysInMonth = _daysInCurrentMonth - _daysOnFirstRow;
+  // _daysOnLastRow = _remainingDaysInMonth % 7;
+  // _lastRegularDay = _daysInCurrentMonth - _daysOnLastRow;
+  // }
+
+  List<TableRow> _generateRows() {
+    _addDayOfWeekNames();
+    // _addFirstWeekOfMonth();
+    // _addFullWeeks();
+    // if (_isLastWeekIncomplete()) _addDaysOfLastWeek();
+    return _children;
+  }
+
+  void _addDayOfWeekNames() {
+    final start = _parameters.localizations.firstDayOfWeekIndex;
+    final currentRow = <Widget>[];
+    currentRow.add(const Empty());
+    for (var i = start; i < 7; ++i) {
+      currentRow.add(WeekDayName(dayIndex: i));
+    }
+    // for (var i = 0; i < start; ++i) {
+    //   currentRow.add(WeekDayName(dayIndex: i));
+    // }
+    _children.add(TableRow(children: currentRow));
+  }
+
+  void _addFirstWeekOfMonth() {
+    // final currentRow = <Widget>[];
+    // currentRow.add(WeekNumber(date: displayDate.copyWith(day: 1)));
+    // for (var i = 1; i <= _firstDayOffset; ++i) {
+    //   currentRow.add(const Empty());
+    // }
+    // for (var i = _firstDayOffset; i < 7; ++i) {
+    //   currentRow.add(Day(day: 1 + i - _firstDayOffset));
+    // }
+    // _children.add(TableRow(children: currentRow));
+  }
+
+  void _addFullWeeks() {
+    // var currentDay = _firstRegularDay;
+    // var currentRow = _newFullWeekRow(currentDay);
+    // while (_isBeforeLastRegularDay(currentDay)) {
+    //   currentRow.add(Day(day: currentDay));
+    //   ++currentDay;
+    //   if (_shouldStartNewFullWeekRow(currentDay)) {
+    //     _storeFullWeekRow(currentRow);
+    //     currentRow = _newFullWeekRow(currentDay);
+    //   }
+    // }
+    // currentRow.add(Day(day: _lastRegularDay));
+    // _storeFullWeekRow(currentRow);
+  }
+
+  List<Widget> _newFullWeekRow(int day) {
+    // final result = <Widget>[];
+    // result.add(WeekNumber(date: displayDate.copyWith(day: day)));
+    // return result;
+    return List.empty();
+  }
+
+  bool _isBeforeLastRegularDay(int day) {
+    return false; // day < _lastRegularDay;
+  }
+
+  bool _shouldStartNewFullWeekRow(int day) {
+    return false; //(day - _firstRegularDay) % 7 == 0;
+  }
+
+  void _storeFullWeekRow(List<Widget> row) {
+    // _children.add(TableRow(children: row));
+  }
+
+  bool _isLastWeekIncomplete() => false; // _daysOnLastRow != 0;
+
+  void _addDaysOfLastWeek() {
+    // final currentRow = <Widget>[];
+    // currentRow.add(WeekNumber(date: displayDate.copyWith(day: _daysInCurrentMonth)));
+    // for (var i = _daysInCurrentMonth - _daysOnLastRow + 1; i <= _daysInCurrentMonth; ++i) {
+    //   currentRow.add(Day(day: i));
+    // }
+    // for (var i = _daysOnLastRow; i < 7; ++i) {
+    //   currentRow.add(const Empty());
+    // }
+    // _children.add(TableRow(children: currentRow));
+  }
+}
+
+@visibleForTesting
+class Empty extends StatelessWidget {
+  const Empty({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text('');
+  }
+}
+
+@visibleForTesting
 class WeekDayName extends StatelessWidget {
   final int dayIndex;
 

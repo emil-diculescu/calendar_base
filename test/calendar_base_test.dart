@@ -66,11 +66,21 @@ void main() {
       expect(widgetTester.widget(find.bySubtype<Placeholder>()), _stubWidget);
     });
   });
+
+  group('Week display test for separate month view', () {
+    testWidgets('Test month starting on Sunday', (widgetTester) async {
+      final tester = _IndividualMonthTester(widgetTester: widgetTester, year: 2024, month: 9);
+      await tester.init();
+      tester.testRow(rowNumber: 0, expected: ['', 'S', 'M', 'T', 'W', 'T', 'F', 'S']);
+    });
+  });
 }
 
 abstract class Builders {
   Widget dayBuilder(BuildContext context, DateTime date);
+
   Widget weekNumberBuilder(BuildContext context, int weekNumber);
+
   Widget weekDayNameBuilder(BuildContext context, String weekDayName);
 }
 
@@ -91,4 +101,39 @@ Widget _widgetWithBuilders(Widget child) {
       weekDayNameBuilder: _builders.weekDayNameBuilder,
       localizations: const DefaultMaterialLocalizations(),
       child: Directionality(textDirection: TextDirection.ltr, child: child));
+}
+
+class _IndividualMonthTester {
+  final WidgetTester widgetTester;
+
+  final int year;
+
+  final int month;
+
+  final List<TableRow> rows = <TableRow>[];
+
+  _IndividualMonthTester({required this.widgetTester, required this.year, required this.month});
+
+  Future<void> init() async {
+    await widgetTester.pumpWidget(_widgetWithoutBuilders(WeeksInMonthView(DateTime(year, month, 1))));
+    final widget = widgetTester.widget<Table>(find.bySubtype<Table>());
+    rows.addAll(widget.children);
+  }
+
+  void testRow({required int rowNumber, required List<String> expected}) {
+    assert(rowNumber >= 0 && rowNumber < rows.length);
+    final row = rows[rowNumber].children;
+    expect(row.length, expected.length, reason: 'The actual and expected lists have different lengths');
+    for (var i = 0; i < row.length; ++i) {
+      expect(_textFrom(row[i]), expected[i], reason: 'The values do not match at position $i');
+    }
+  }
+
+  String _textFrom(Widget widget) {
+    final finder = find.descendant(of: find.byWidget(widget), matching: find.bySubtype<Text>());
+    final textWidget = widgetTester.widget<Text>(finder);
+    return textWidget.data!.trim();
+  }
+
+  void testWeek({required int weekNumber, required int startsWith, required int endsWith}) {}
 }
