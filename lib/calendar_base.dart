@@ -34,13 +34,13 @@ class CalendarViewParameters extends InheritedWidget {
 
   final double minVerticalSpacing;
 
-  // final DateTime initialDate;
+  final DateTime initialDate;
 
   final MaterialLocalizations localizations;
 
   const CalendarViewParameters(
       {super.key,
-      // required this.initialDate,
+      required this.initialDate,
       required this.localizations,
       this.dayBuilder,
       this.weekNumberBuilder,
@@ -72,11 +72,10 @@ class CalendarRow extends StatelessWidget {
               (parameters.minMonthViewWidth + parameters.minHorizontalSpacing))
           .floor();
       final availableMaxWidth = (constraints.maxWidth - (columns + 1) * parameters.minHorizontalSpacing) / columns;
-      //   final firstDateOfRow = DateUtils.addMonthsToMonthDate(parameters.initialDate, rowIndex * columns);
+      final firstDateOfRow = DateUtils.addMonthsToMonthDate(parameters.initialDate, rowIndex * columns);
       final children = <Widget>[];
       for (var i = 0; i < columns; ++i) {
-        //final displayDate = DateUtils.addMonthsToMonthDate(firstDateOfRow, i);
-        final displayDate = DateUtils.addMonthsToMonthDate(DateTime(1900, 1, 1), i);
+        final displayDate = DateUtils.addMonthsToMonthDate(firstDateOfRow, i);
         children.add(ConstrainedBox(
             constraints: BoxConstraints(
                 minWidth: parameters.minMonthViewWidth, maxWidth: min(availableMaxWidth, parameters.maxMonthViewWidth)),

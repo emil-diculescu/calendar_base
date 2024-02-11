@@ -164,6 +164,22 @@ void main() {
           child: _widgetWithoutBuilders(const CalendarRow(rowIndex: 0))));
       expect(find.bySubtype<MonthView>(), findsExactly(expectedColumns));
     });
+
+    testWidgets('Shows the correct months', (widgetTester) async {
+      final random = Random();
+      final expectedColumns = 2 + random.nextInt(5);
+      final testDate = DateTime.now();
+      final row = 0 + random.nextInt(5);
+      final offset = row * expectedColumns;
+      await widgetTester.pumpWidget(await _constrainedWidget(
+          widgetTester: widgetTester,
+          width: enoughWidthFor(columns: expectedColumns),
+          child: _widgetWithoutBuilders(CalendarRow(rowIndex: row))));
+      for (var i = 0; i < expectedColumns; ++i) {
+        expect(find.text(_localizations.formatMonthYear(DateUtils.addMonthsToMonthDate(testDate, offset + i))),
+            findsOneWidget);
+      }
+    });
   });
 }
 
@@ -183,6 +199,7 @@ DateTime _today() {
 
 Widget _widgetWithoutBuilders(Widget child) {
   return CalendarViewParameters(
+      initialDate: DateTime.now(),
       localizations: _localizations,
       minMonthViewWidth: _minColumnWidth,
       maxMonthViewWidth: _maxColumnWidth,
@@ -193,6 +210,7 @@ Widget _widgetWithoutBuilders(Widget child) {
 
 Widget _widgetWithBuilders(Widget child) {
   return CalendarViewParameters(
+      initialDate: DateTime.now(),
       dayBuilder: _builders.dayBuilder,
       weekNumberBuilder: _builders.weekNumberBuilder,
       weekDayNameBuilder: _builders.weekDayNameBuilder,
