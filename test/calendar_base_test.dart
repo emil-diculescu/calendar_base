@@ -14,7 +14,9 @@ const _maxColumnWidth = 400.0;
 const _minHorizontalSpacing = 16.0;
 const _minVerticalSpacing = 16.0;
 const _stubWidget = Placeholder();
-final MockBuilders _builders = MockBuilders();
+const _surfaceHeight = 600.0;
+final _builders = MockBuilders();
+final _random = Random();
 
 @GenerateNiceMocks([MockSpec<Builders>()])
 void main() {
@@ -55,8 +57,7 @@ void main() {
 
   group('Week day name tests', () {
     const weekDayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    final random = Random();
-    final testIndex = random.nextInt(weekDayNames.length);
+    final testIndex = _random.nextInt(weekDayNames.length);
 
     setUpAll(() => when(_builders.weekDayNameBuilder(any, any)).thenReturn(_stubWidget));
 
@@ -143,30 +144,25 @@ void main() {
   });
 
   group('Calendar row testing', () {
-    double enoughWidthFor({required int columns}) {
-      return (_minColumnWidth + _minHorizontalSpacing) * (columns + 1) + _minHorizontalSpacing - 1;
-    }
-
     testWidgets('Shows one column when space is smaller than two minimum widths', (widgetTester) async {
-      await widgetTester.binding.setSurfaceSize(Size(enoughWidthFor(columns: 1), 600));
+      await _setSurfaceSize(widgetTester: widgetTester, expectedColumns: 1);
       await widgetTester.pumpWidget(_widgetWithoutBuilders(const CalendarRow(rowIndex: 0)));
       expect(find.bySubtype<MonthView>(), findsExactly(1));
     });
 
     testWidgets('Shows more columns if space is available', (widgetTester) async {
       const maxColumns = 5;
-      final expectedColumns = 2 + Random().nextInt(maxColumns - 1);
-      await widgetTester.binding.setSurfaceSize(Size(enoughWidthFor(columns: expectedColumns), 600));
+      final expectedColumns = 2 + _random.nextInt(maxColumns - 1);
+      await _setSurfaceSize(widgetTester: widgetTester, expectedColumns: expectedColumns);
       await widgetTester.pumpWidget(_widgetWithoutBuilders(const CalendarRow(rowIndex: 0)));
       expect(find.bySubtype<MonthView>(), findsExactly(expectedColumns));
     });
 
     testWidgets('Shows the correct months', (widgetTester) async {
-      final random = Random();
-      final expectedColumns = 2 + random.nextInt(5);
-      await widgetTester.binding.setSurfaceSize(Size(enoughWidthFor(columns: expectedColumns), 600));
+      final expectedColumns = 2 + _random.nextInt(5);
+      await _setSurfaceSize(widgetTester: widgetTester, expectedColumns: expectedColumns);
       final testDate = DateTime.now();
-      final row = 0 + random.nextInt(5);
+      final row = 0 + _random.nextInt(5);
       final offset = row * expectedColumns;
       await widgetTester.pumpWidget(_widgetWithoutBuilders(CalendarRow(rowIndex: row)));
       for (var i = 0; i < expectedColumns; ++i) {
@@ -176,7 +172,17 @@ void main() {
     });
   });
 
-  group('Calendar testing', () {});
+  group('Calendar testing', () {
+    testWidgets('Shows rows in correct order', (widgetTester) async {
+      final expectedColumns = 1 + _random.nextInt(5);
+      final testDate = DateTime.now();
+      await _setSurfaceSize(widgetTester: widgetTester, expectedColumns: expectedColumns);
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(CalendarBase(initialDate: testDate)));
+      expect(find.text(_localizations.formatMonthYear(testDate)), findsOneWidget);
+      final firstMonthOnSecondRow = DateUtils.addMonthsToMonthDate(testDate, expectedColumns);
+      expect(find.text(_localizations.formatMonthYear(firstMonthOnSecondRow)), findsOneWidget);
+    });
+  });
 }
 
 abstract class Builders {
@@ -187,36 +193,6 @@ abstract class Builders {
   Widget weekDayNameBuilder(BuildContext context, String weekDayName);
 
   Widget monthNameBuilder(BuildContext context, DateTime date);
-}
-
-DateTime _today() {
-  return DateUtils.dateOnly(DateTime.now());
-}
-
-Widget _widgetWithoutBuilders(Widget child) {
-  return CalendarViewParameters(
-      initialDate: DateTime.now(),
-      localizations: _localizations,
-      minMonthViewWidth: _minColumnWidth,
-      maxMonthViewWidth: _maxColumnWidth,
-      minHorizontalSpacing: _minHorizontalSpacing,
-      minVerticalSpacing: _minVerticalSpacing,
-      child: Directionality(textDirection: TextDirection.ltr, child: child));
-}
-
-Widget _widgetWithBuilders(Widget child) {
-  return CalendarViewParameters(
-      initialDate: DateTime.now(),
-      dayBuilder: _builders.dayBuilder,
-      weekNumberBuilder: _builders.weekNumberBuilder,
-      weekDayNameBuilder: _builders.weekDayNameBuilder,
-      monthNameBuilder: _builders.monthNameBuilder,
-      localizations: _localizations,
-      minMonthViewWidth: _minColumnWidth,
-      maxMonthViewWidth: _maxColumnWidth,
-      minHorizontalSpacing: _minHorizontalSpacing,
-      minVerticalSpacing: _minVerticalSpacing,
-      child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
 
 class _IndividualMonthTester {
@@ -285,3 +261,40 @@ class _IndividualMonthTester {
     expect(rows.length, expectedRowCount);
   }
 }
+
+DateTime _today() {
+  return DateUtils.dateOnly(DateTime.now());
+}
+
+Widget _widgetWithoutBuilders(Widget child) {
+  return CalendarViewParameters(
+      initialDate: DateTime.now(),
+      localizations: _localizations,
+      minMonthViewWidth: _minColumnWidth,
+      maxMonthViewWidth: _maxColumnWidth,
+      minHorizontalSpacing: _minHorizontalSpacing,
+      minVerticalSpacing: _minVerticalSpacing,
+      child: Directionality(textDirection: TextDirection.ltr, child: child));
+}
+
+Widget _widgetWithBuilders(Widget child) {
+  return CalendarViewParameters(
+      initialDate: DateTime.now(),
+      dayBuilder: _builders.dayBuilder,
+      weekNumberBuilder: _builders.weekNumberBuilder,
+      weekDayNameBuilder: _builders.weekDayNameBuilder,
+      monthNameBuilder: _builders.monthNameBuilder,
+      localizations: _localizations,
+      minMonthViewWidth: _minColumnWidth,
+      maxMonthViewWidth: _maxColumnWidth,
+      minHorizontalSpacing: _minHorizontalSpacing,
+      minVerticalSpacing: _minVerticalSpacing,
+      child: Directionality(textDirection: TextDirection.ltr, child: child));
+}
+
+double _enoughWidthFor({required int columns}) {
+  return (_minColumnWidth + _minHorizontalSpacing) * (columns + 1) + _minHorizontalSpacing - 1;
+}
+
+Future<void> _setSurfaceSize({required WidgetTester widgetTester, required int expectedColumns}) =>
+    widgetTester.binding.setSurfaceSize(Size(_enoughWidthFor(columns: expectedColumns), _surfaceHeight));

@@ -3,10 +3,39 @@ library calendar_base;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:indexed_list_view/indexed_list_view.dart';
 
 typedef DateToWidgetBuilder = Widget Function(BuildContext, DateTime);
 typedef IntToWidgetBuilder = Widget Function(BuildContext, int);
 typedef StringToWidgetBuilder = Widget Function(BuildContext, String);
+
+class CalendarBase extends StatelessWidget {
+  final DateTime? initialDate;
+
+  final MaterialLocalizations? localizations;
+
+  final double minMonthViewWidth;
+
+  final double maxMonthViewWidth;
+
+  const CalendarBase(
+      {super.key, this.minMonthViewWidth = 200, this.maxMonthViewWidth = 400, this.initialDate, this.localizations});
+
+  @override
+  Widget build(BuildContext context) {
+    return CalendarViewParameters(
+      minMonthViewWidth: minMonthViewWidth,
+      maxMonthViewWidth: maxMonthViewWidth,
+      initialDate: DateUtils.dateOnly(initialDate ?? DateTime.now()),
+      localizations: localizations ?? const DefaultMaterialLocalizations(),
+      child: IndexedListView.builder(
+          controller: IndexedScrollController(),
+          itemBuilder: (indexedListViewContext, index) {
+            return CalendarRow(rowIndex: index);
+          }),
+    );
+  }
+}
 
 @visibleForTesting
 class CalendarViewParameters extends InheritedWidget {
