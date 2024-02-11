@@ -126,9 +126,15 @@ void main() {
 
   group('Month view (separated months) tests', () {
     final DateTime testDate = DateTime.now();
+
     testWidgets('Displays month name', (widgetTester) async {
       await widgetTester.pumpWidget(_widgetWithoutBuilders(MonthView(date: testDate)));
       expect(find.bySubtype<MonthNameView>(), findsOneWidget);
+    });
+
+    testWidgets('Displays weeks in month', (widgetTester) async {
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(MonthView(date: testDate)));
+      expect(find.bySubtype<WeeksInMonthView>(), findsOneWidget);
     });
   });
 }
