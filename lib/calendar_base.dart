@@ -22,6 +22,8 @@ class CalendarViewParameters extends InheritedWidget {
 
   final StringToWidgetBuilder? weekDayNameBuilder;
 
+  final DateToWidgetBuilder? monthNameBuilder;
+
   // final double minMonthViewWidth;
 
   // final double maxMonthViewWidth;
@@ -35,6 +37,7 @@ class CalendarViewParameters extends InheritedWidget {
       this.dayBuilder,
       this.weekNumberBuilder,
       this.weekDayNameBuilder,
+      this.monthNameBuilder,
       // required this.minMonthViewWidth,
       // required this.maxMonthViewWidth,
       // required this.initialDate,
@@ -55,7 +58,12 @@ class MonthNameView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _CenteredText(text: CalendarViewParameters.of(context).localizations.formatMonthYear(date));
+    final builder = CalendarViewParameters.of(context).monthNameBuilder;
+    if (builder != null) {
+      return builder(context, date);
+    } else {
+      return _CenteredText(text: CalendarViewParameters.of(context).localizations.formatMonthYear(date));
+    }
   }
 }
 

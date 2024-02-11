@@ -110,9 +110,17 @@ void main() {
   group('Month name view tests', () {
     final DateTime testDate = _today();
 
+    setUpAll(() => when(_builders.monthNameBuilder(any, any)).thenReturn(_stubWidget));
+
     testWidgets('Displays the month and the year by default', (widgetTester) async {
       await widgetTester.pumpWidget(_widgetWithoutBuilders(MonthNameView(date: testDate)));
       expect(find.text(_localizations.formatMonthYear(testDate)), findsOneWidget);
+    });
+
+    testWidgets('Calls builder, if builder is provided', (widgetTester) async {
+      await widgetTester.pumpWidget(_widgetWithBuilders(MonthNameView(date: testDate)));
+      verify(_builders.monthNameBuilder(any, testDate));
+      expect(widgetTester.widget(find.bySubtype<Placeholder>()), _stubWidget);
     });
   });
 }
@@ -123,6 +131,8 @@ abstract class Builders {
   Widget weekNumberBuilder(BuildContext context, int weekNumber);
 
   Widget weekDayNameBuilder(BuildContext context, String weekDayName);
+
+  Widget monthNameBuilder(BuildContext context, DateTime date);
 }
 
 DateTime _today() {
@@ -139,6 +149,7 @@ Widget _widgetWithBuilders(Widget child) {
       dayBuilder: _builders.dayBuilder,
       weekNumberBuilder: _builders.weekNumberBuilder,
       weekDayNameBuilder: _builders.weekDayNameBuilder,
+      monthNameBuilder: _builders.monthNameBuilder,
       localizations: _localizations,
       child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
