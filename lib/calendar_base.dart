@@ -112,7 +112,7 @@ class CalendarRow extends StatelessWidget {
             child: MonthView(date: displayDate)));
       }
       return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: children,
       );
