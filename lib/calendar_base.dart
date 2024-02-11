@@ -105,7 +105,7 @@ class _RowGenerator {
   void _addDayOfWeekNames() {
     final start = _parameters.localizations.firstDayOfWeekIndex;
     final currentRow = <Widget>[];
-    currentRow.add(const Empty());
+    currentRow.add(const _Empty());
     for (var i = start; i < 7; ++i) {
       currentRow.add(WeekDayName(dayIndex: i));
     }
@@ -181,9 +181,8 @@ class _RowGenerator {
   }
 }
 
-@visibleForTesting
-class Empty extends StatelessWidget {
-  const Empty({super.key});
+class _Empty extends StatelessWidget {
+  const _Empty({super.key});
 
   @override
   Widget build(BuildContext context) {
