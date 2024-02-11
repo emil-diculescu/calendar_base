@@ -8,6 +8,7 @@ import 'package:mockito/mockito.dart';
 
 import 'calendar_base_test.mocks.dart';
 
+const _localizations = DefaultMaterialLocalizations();
 const _stubWidget = Placeholder();
 final MockBuilders _builders = MockBuilders();
 
@@ -105,6 +106,15 @@ void main() {
       tester.testNoMoreRows(expectedRowCount: 7);
     });
   });
+
+  group('Month name view tests', () {
+    final DateTime testDate = _today();
+
+    testWidgets('Displays the month and the year by default', (widgetTester) async {
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(MonthNameView(date: testDate)));
+      expect(find.text(_localizations.formatMonthYear(testDate)), findsOneWidget);
+    });
+  });
 }
 
 abstract class Builders {
@@ -121,8 +131,7 @@ DateTime _today() {
 
 Widget _widgetWithoutBuilders(Widget child) {
   return CalendarViewParameters(
-      localizations: const DefaultMaterialLocalizations(),
-      child: Directionality(textDirection: TextDirection.ltr, child: child));
+      localizations: _localizations, child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
 
 Widget _widgetWithBuilders(Widget child) {
@@ -130,7 +139,7 @@ Widget _widgetWithBuilders(Widget child) {
       dayBuilder: _builders.dayBuilder,
       weekNumberBuilder: _builders.weekNumberBuilder,
       weekDayNameBuilder: _builders.weekDayNameBuilder,
-      localizations: const DefaultMaterialLocalizations(),
+      localizations: _localizations,
       child: Directionality(textDirection: TextDirection.ltr, child: child));
 }
 
