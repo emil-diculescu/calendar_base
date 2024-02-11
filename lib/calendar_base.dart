@@ -1,5 +1,7 @@
 library calendar_base;
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 typedef DateToWidgetBuilder = Widget Function(BuildContext, DateTime);
@@ -66,15 +68,18 @@ class CalendarRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final parameters = CalendarViewParameters.of(context);
     return LayoutBuilder(builder: (layoutBuilderContext, constraints) {
-      //   final columns = (constraints.maxWidth / parameters.maxMonthViewWidth).floor();
-      final columns = 1;
+      final columns = ((constraints.maxWidth - parameters.minHorizontalSpacing) /
+              (parameters.minMonthViewWidth + parameters.minHorizontalSpacing))
+          .floor();
+      final availableMaxWidth = (constraints.maxWidth - (columns + 1) * parameters.minHorizontalSpacing) / columns;
       //   final firstDateOfRow = DateUtils.addMonthsToMonthDate(parameters.initialDate, rowIndex * columns);
       final children = <Widget>[];
       for (var i = 0; i < columns; ++i) {
         //final displayDate = DateUtils.addMonthsToMonthDate(firstDateOfRow, i);
         final displayDate = DateUtils.addMonthsToMonthDate(DateTime(1900, 1, 1), i);
         children.add(ConstrainedBox(
-            constraints: BoxConstraints(minWidth: parameters.minMonthViewWidth, maxWidth: parameters.maxMonthViewWidth),
+            constraints: BoxConstraints(
+                minWidth: parameters.minMonthViewWidth, maxWidth: min(availableMaxWidth, parameters.maxMonthViewWidth)),
             child: MonthView(date: displayDate)));
       }
       return Row(

@@ -143,11 +143,26 @@ void main() {
   });
 
   group('Calendar row testing', () {
+    double enoughWidthFor({required int columns}) {
+      return (_minColumnWidth + _minHorizontalSpacing) * (columns + 1) + _minHorizontalSpacing - 1;
+    }
+
     testWidgets('Shows one column when space is smaller than two minimum widths', (widgetTester) async {
-      await widgetTester.pumpWidget(_constrainedWidget(
-          width: 2 * _minColumnWidth + 3 * _minHorizontalSpacing - 1,
+      await widgetTester.pumpWidget(await _constrainedWidget(
+          widgetTester: widgetTester,
+          width: enoughWidthFor(columns: 1),
           child: _widgetWithoutBuilders(const CalendarRow(rowIndex: 0))));
       expect(find.bySubtype<MonthView>(), findsExactly(1));
+    });
+
+    testWidgets('Shows more columns if space is available', (widgetTester) async {
+      const maxColumns = 5;
+      final expectedColumns = 2 + Random().nextInt(maxColumns - 1);
+      await widgetTester.pumpWidget(await _constrainedWidget(
+          widgetTester: widgetTester,
+          width: enoughWidthFor(columns: expectedColumns),
+          child: _widgetWithoutBuilders(const CalendarRow(rowIndex: 0))));
+      expect(find.bySubtype<MonthView>(), findsExactly(expectedColumns));
     });
   });
 }
@@ -257,7 +272,8 @@ class _IndividualMonthTester {
   }
 }
 
-Widget _constrainedWidget({required width, required Widget child}) {
+Future<Widget> _constrainedWidget({required WidgetTester widgetTester, required width, required Widget child}) async {
+  await widgetTester.binding.setSurfaceSize(Size(width, 600));
   return ConstrainedBox(
     constraints: BoxConstraints(
       minWidth: width,
