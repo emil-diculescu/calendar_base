@@ -73,6 +73,9 @@ void main() {
       await tester.init();
       tester.testRow(rowNumber: 0, expected: ['', 'S', 'M', 'T', 'W', 'T', 'F', 'S']);
       tester.testWeek(expectedRowNumber: 1, weekNumber: 36, startsWith: 1, endsWith: 7);
+      tester.testWeek(expectedRowNumber: 2, weekNumber: 37, startsWith: 8, endsWith: 14);
+      tester.testWeek(expectedRowNumber: 3, weekNumber: 38, startsWith: 15, endsWith: 21);
+      tester.testWeek(expectedRowNumber: 4, weekNumber: 39, startsWith: 22, endsWith: 28);
     });
   });
 }
