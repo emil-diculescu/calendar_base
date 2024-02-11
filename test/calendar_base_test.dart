@@ -180,7 +180,7 @@ class _IndividualMonthTester {
   _IndividualMonthTester({required this.widgetTester, required this.year, required this.month});
 
   Future<void> init() async {
-    await widgetTester.pumpWidget(_widgetWithoutBuilders(WeeksInMonthView(DateTime(year, month, 1))));
+    await widgetTester.pumpWidget(_widgetWithoutBuilders(WeeksInMonthView(date: DateTime(year, month, 1))));
     final widget = widgetTester.widget<Table>(find.bySubtype<Table>());
     rows.addAll(widget.children);
   }

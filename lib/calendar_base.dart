@@ -62,7 +62,7 @@ class MonthView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         MonthNameView(date: date),
-        WeeksInMonthView(date),
+        WeeksInMonthView(date: date),
       ],
     );
   }
@@ -87,13 +87,13 @@ class MonthNameView extends StatelessWidget {
 
 @visibleForTesting
 class WeeksInMonthView extends StatelessWidget {
-  final DateTime displayDate;
+  final DateTime date;
 
-  const WeeksInMonthView(this.displayDate, {super.key});
+  const WeeksInMonthView({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {
-    final generator = _RowGenerator(context: context, displayDate: displayDate);
+    final generator = _RowGenerator(context: context, displayDate: date);
     return Table(
       children: generator.rows,
     );
