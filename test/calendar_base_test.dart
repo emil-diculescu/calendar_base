@@ -72,6 +72,7 @@ void main() {
       final tester = _IndividualMonthTester(widgetTester: widgetTester, year: 2024, month: 9);
       await tester.init();
       tester.testRow(rowNumber: 0, expected: ['', 'S', 'M', 'T', 'W', 'T', 'F', 'S']);
+      tester.testWeek(expectedRowNumber: 1, weekNumber: 36, startsWith: 1, endsWith: 7);
     });
   });
 }
@@ -135,5 +136,16 @@ class _IndividualMonthTester {
     return textWidget.data!.trim();
   }
 
-  void testWeek({required int weekNumber, required int startsWith, required int endsWith}) {}
+  void testWeek(
+      {required int expectedRowNumber, required int weekNumber, required int startsWith, required int endsWith}) {
+    assert(weekNumber >= 1 && weekNumber <= 53);
+    assert(startsWith >= 1 && startsWith <= endsWith);
+    assert(endsWith >= startsWith && endsWith <= 31);
+    final expected = <String>[];
+    expected.add(weekNumber.toString());
+    for (var i = startsWith; i <= endsWith; ++i) {
+      expected.add(i.toString());
+    }
+    return testRow(rowNumber: expectedRowNumber, expected: expected);
+  }
 }

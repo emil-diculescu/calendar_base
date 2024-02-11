@@ -89,7 +89,7 @@ class _RowGenerator {
 
   List<TableRow> _generateRows() {
     _addDayOfWeekNames();
-    // _addFirstWeekOfMonth();
+    _addFirstWeekOfMonth();
     // _addFullWeeks();
     // if (_isLastWeekIncomplete()) _addDaysOfLastWeek();
     return _children;
@@ -109,15 +109,18 @@ class _RowGenerator {
   }
 
   void _addFirstWeekOfMonth() {
-    // final currentRow = <Widget>[];
-    // currentRow.add(WeekNumber(date: displayDate.copyWith(day: 1)));
+    final currentRow = <Widget>[];
+    currentRow.add(WeekNumber(date: displayDate.copyWith(day: 1)));
+    for (var i = 1; i <= 7; ++i) {
+      currentRow.add(Day(date: displayDate.copyWith(day: i)));
+    }
     // for (var i = 1; i <= _firstDayOffset; ++i) {
     //   currentRow.add(const Empty());
     // }
     // for (var i = _firstDayOffset; i < 7; ++i) {
     //   currentRow.add(Day(day: 1 + i - _firstDayOffset));
     // }
-    // _children.add(TableRow(children: currentRow));
+    _children.add(TableRow(children: currentRow));
   }
 
   void _addFullWeeks() {
