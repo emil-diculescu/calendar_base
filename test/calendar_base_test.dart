@@ -68,16 +68,41 @@ void main() {
   });
 
   group('Week display test for separate month view', () {
-    testWidgets('Test month starting on Sunday', (widgetTester) async {
+    testWidgets('Test month starting on first day of the week', (widgetTester) async {
       final tester = _IndividualMonthTester(widgetTester: widgetTester, year: 2024, month: 9);
       await tester.init();
-      tester.testRow(rowNumber: 0, expected: ['', 'S', 'M', 'T', 'W', 'T', 'F', 'S']);
+      tester.testWeekNameRow();
       tester.testWeek(expectedRowNumber: 1, weekNumber: 36, startsWith: 1, endsWith: 7);
       tester.testWeek(expectedRowNumber: 2, weekNumber: 37, startsWith: 8, endsWith: 14);
       tester.testWeek(expectedRowNumber: 3, weekNumber: 38, startsWith: 15, endsWith: 21);
       tester.testWeek(expectedRowNumber: 4, weekNumber: 39, startsWith: 22, endsWith: 28);
       tester.testWeek(expectedRowNumber: 5, weekNumber: 40, startsWith: 29, endsWith: 30);
       tester.testNoMoreRows(expectedRowCount: 6);
+    });
+
+    testWidgets('Test month ending on the last day of the week', (widgetTester) async {
+      final tester = _IndividualMonthTester(widgetTester: widgetTester, year: 2024, month: 8);
+      await tester.init();
+      tester.testWeekNameRow();
+      tester.testWeek(expectedRowNumber: 1, weekNumber: 31, startsWith: 1, endsWith: 3);
+      tester.testWeek(expectedRowNumber: 2, weekNumber: 32, startsWith: 4, endsWith: 10);
+      tester.testWeek(expectedRowNumber: 3, weekNumber: 33, startsWith: 11, endsWith: 17);
+      tester.testWeek(expectedRowNumber: 4, weekNumber: 34, startsWith: 18, endsWith: 24);
+      tester.testWeek(expectedRowNumber: 5, weekNumber: 35, startsWith: 25, endsWith: 31);
+      tester.testNoMoreRows(expectedRowCount: 6);
+    });
+
+    testWidgets('Test month that start and end during the week', (widgetTester) async {
+      final tester = _IndividualMonthTester(widgetTester: widgetTester, year: 2024, month: 6);
+      await tester.init();
+      tester.testWeekNameRow();
+      tester.testWeek(expectedRowNumber: 1, weekNumber: 22, startsWith: 1, endsWith: 1);
+      tester.testWeek(expectedRowNumber: 2, weekNumber: 23, startsWith: 2, endsWith: 8);
+      tester.testWeek(expectedRowNumber: 3, weekNumber: 24, startsWith: 9, endsWith: 15);
+      tester.testWeek(expectedRowNumber: 4, weekNumber: 25, startsWith: 16, endsWith: 22);
+      tester.testWeek(expectedRowNumber: 5, weekNumber: 26, startsWith: 23, endsWith: 29);
+      tester.testWeek(expectedRowNumber: 6, weekNumber: 27, startsWith: 30, endsWith: 30);
+      tester.testNoMoreRows(expectedRowCount: 7);
     });
   });
 }
@@ -126,7 +151,11 @@ class _IndividualMonthTester {
     rows.addAll(widget.children);
   }
 
-  void testRow({required int rowNumber, required List<String> expected}) {
+  void testWeekNameRow() {
+    _testRow(rowNumber: 0, expected: ['', 'S', 'M', 'T', 'W', 'T', 'F', 'S']);
+  }
+
+  void _testRow({required int rowNumber, required List<String> expected}) {
     assert(rowNumber >= 0 && rowNumber < rows.length, 'Row number: $rowNumber');
     final row = rows[rowNumber].children;
     expect(row.length, expected.length, reason: 'The actual and expected lists have different lengths');
@@ -160,7 +189,7 @@ class _IndividualMonthTester {
     if (isNotFullWeek && !isFirstWeekOfMonth) {
       _padWithEmpty(expected, daysInWeek);
     }
-    return testRow(rowNumber: expectedRowNumber, expected: expected);
+    return _testRow(rowNumber: expectedRowNumber, expected: expected);
   }
 
   void _padWithEmpty(List<String> expected, int daysInWeek) {

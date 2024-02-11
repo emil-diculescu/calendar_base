@@ -63,7 +63,6 @@ class WeeksInMonthView extends StatelessWidget {
 }
 
 class _RowGenerator {
-  //TODO: ZZZZ means intermediary code used just to facilitate step by step testing. This code should disappear when the class is fully implemented.
   final List<TableRow> _children = <TableRow>[];
   final BuildContext context;
   final DateTime displayDate;
@@ -82,10 +81,7 @@ class _RowGenerator {
       : _parameters = CalendarViewParameters.of(context),
         _daysInCurrentMonth = DateUtils.getDaysInMonth(displayDate.year, displayDate.month) {
     _firstDayOffset = DateUtils.firstDayOffset(displayDate.year, displayDate.month, _parameters.localizations);
-    //TODO: ZZZZ
-    _firstRegularDay = 8;
-    //TODO: ZZZZ
-    // _firstRegularDay = 7 - _firstDayOffset + 1;
+    _firstRegularDay = 7 - _firstDayOffset + 1;
     _daysOnFirstRow = 7 - _firstDayOffset;
     _remainingDaysInMonth = _daysInCurrentMonth - _daysOnFirstRow;
     _daysOnLastRow = _remainingDaysInMonth % 7;
@@ -96,8 +92,7 @@ class _RowGenerator {
     _addDayOfWeekNames();
     _addFirstWeekOfMonth();
     _addFullWeeks();
-    // if (_isLastWeekIncomplete())
-    _addDaysOfLastWeek();
+    if (_isLastWeekIncomplete()) _addDaysOfLastWeek();
     return _children;
   }
 
@@ -108,27 +103,21 @@ class _RowGenerator {
     for (var i = start; i < 7; ++i) {
       currentRow.add(WeekDayName(dayIndex: i));
     }
-    // for (var i = 0; i < start; ++i) {
-    //   currentRow.add(WeekDayName(dayIndex: i));
-    // }
+    for (var i = 0; i < start; ++i) {
+      currentRow.add(WeekDayName(dayIndex: i));
+    }
     _children.add(TableRow(children: currentRow));
   }
 
   void _addFirstWeekOfMonth() {
     final currentRow = <Widget>[];
     currentRow.add(WeekNumber(date: displayDate.copyWith(day: 1)));
-    //TODO: ZZZZ
-    for (var i = 1; i <= 7; ++i) {
-      currentRow.add(Day(date: displayDate.copyWith(day: i)));
+    for (var i = 1; i <= _firstDayOffset; ++i) {
+      currentRow.add(const _Empty());
     }
-    //TODO: ZZZZ
-
-    // for (var i = 1; i <= _firstDayOffset; ++i) {
-    //   currentRow.add(const Empty());
-    // }
-    // for (var i = _firstDayOffset; i < 7; ++i) {
-    //   currentRow.add(Day(day: 1 + i - _firstDayOffset));
-    // }
+    for (var i = _firstDayOffset; i < 7; ++i) {
+      currentRow.add(Day(date: displayDate.copyWith(day: 1 + i - _firstDayOffset)));
+    }
     _children.add(TableRow(children: currentRow));
   }
 
@@ -165,7 +154,7 @@ class _RowGenerator {
     _children.add(TableRow(children: row));
   }
 
-  bool _isLastWeekIncomplete() => false; // _daysOnLastRow != 0;
+  bool _isLastWeekIncomplete() => _daysOnLastRow != 0;
 
   void _addDaysOfLastWeek() {
     final currentRow = <Widget>[];
@@ -181,7 +170,7 @@ class _RowGenerator {
 }
 
 class _Empty extends StatelessWidget {
-  const _Empty({super.key});
+  const _Empty();
 
   @override
   Widget build(BuildContext context) {
