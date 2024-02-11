@@ -51,6 +51,23 @@ class CalendarViewParameters extends InheritedWidget {
 }
 
 @visibleForTesting
+class MonthView extends StatelessWidget {
+  final DateTime date;
+
+  const MonthView({super.key, required this.date});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        MonthNameView(date: date),
+        // WeeksInMonthView(displayDate),
+      ],
+    );
+  }
+}
+
+@visibleForTesting
 class MonthNameView extends StatelessWidget {
   final DateTime date;
 

@@ -123,6 +123,14 @@ void main() {
       expect(widgetTester.widget(find.bySubtype<Placeholder>()), _stubWidget);
     });
   });
+
+  group('Month view (separated months) tests', () {
+    final DateTime testDate = DateTime.now();
+    testWidgets('Displays month name', (widgetTester) async {
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(MonthView(date: testDate)));
+      expect(find.bySubtype<MonthNameView>(), findsOneWidget);
+    });
+  });
 }
 
 abstract class Builders {
