@@ -173,9 +173,10 @@ void main() {
   });
 
   group('Calendar testing', () {
+    final testDate = DateTime.now();
+
     testWidgets('Shows rows in correct order', (widgetTester) async {
       final expectedColumns = 1 + _random.nextInt(5);
-      final testDate = DateTime.now();
       await _setSurfaceSize(widgetTester: widgetTester, expectedColumns: expectedColumns);
       await widgetTester.pumpWidget(_widgetWithoutBuilders(CalendarBase(initialDate: testDate)));
       expect(find.text(_localizations.formatMonthYear(testDate)), findsOneWidget);

@@ -18,14 +18,26 @@ class CalendarBase extends StatelessWidget {
 
   final double maxMonthViewWidth;
 
+  final double minHorizontalSpacing;
+
+  final double minVerticalSpacing;
+
   const CalendarBase(
-      {super.key, this.minMonthViewWidth = 200, this.maxMonthViewWidth = 400, this.initialDate, this.localizations});
+      {super.key,
+      this.initialDate,
+      this.localizations,
+      this.minMonthViewWidth = 200.0,
+      this.maxMonthViewWidth = 400.0,
+      this.minHorizontalSpacing = 8.0,
+      this.minVerticalSpacing = 8.0});
 
   @override
   Widget build(BuildContext context) {
     return CalendarViewParameters(
       minMonthViewWidth: minMonthViewWidth,
       maxMonthViewWidth: maxMonthViewWidth,
+      minHorizontalSpacing: minHorizontalSpacing,
+      minVerticalSpacing: minVerticalSpacing,
       initialDate: DateUtils.dateOnly(initialDate ?? DateTime.now()),
       localizations: localizations ?? const DefaultMaterialLocalizations(),
       child: IndexedListView.builder(
@@ -133,6 +145,9 @@ class MonthView extends StatelessWidget {
       children: [
         MonthNameView(date: date),
         WeeksInMonthView(date: date),
+        SizedBox(
+          height: CalendarViewParameters.of(context).minVerticalSpacing,
+        ),
       ],
     );
   }
