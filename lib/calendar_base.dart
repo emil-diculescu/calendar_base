@@ -121,7 +121,7 @@ class CalendarRow extends StatelessWidget {
             constraints: BoxConstraints(
                 minWidth: parameters.minMonthViewWidth,
                 maxWidth: min(availableColumnWidth, parameters.maxMonthViewWidth)),
-            child: MonthView(date: displayDate)));
+            child: MonthView(date: displayDate, key: Key(parameters.localizations.formatMonthYear(displayDate)))));
       }
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
