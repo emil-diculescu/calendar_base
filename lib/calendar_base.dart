@@ -373,7 +373,11 @@ class WeekNumber extends StatelessWidget {
 class Day extends StatelessWidget {
   final DateTime date;
 
-  const Day({super.key, required this.date});
+  const Day._constructor({super.key, required this.date});
+
+  factory Day({required DateTime date}) {
+    return Day._constructor(key: CalendarBase.dateAsKey(date), date: date);
+  }
 
   @override
   Widget build(BuildContext context) {

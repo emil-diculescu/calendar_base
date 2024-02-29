@@ -202,6 +202,11 @@ void main() {
       final expected = Key('${date.day}${date.month}${date.year}');
       expect(CalendarBase.dateAsKey(date), expected);
     });
+
+    testWidgets('Day widgets have the date as key', (widgetTester) async {
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(const CalendarBase()));
+      expect(find.byKey(CalendarBase.dateAsKey(testDate)), findsOneWidget);
+    });
   });
 }
 
