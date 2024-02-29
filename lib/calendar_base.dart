@@ -10,6 +10,10 @@ typedef IntToWidgetBuilder = Widget Function(BuildContext, int);
 typedef StringToWidgetBuilder = Widget Function(BuildContext, String);
 
 class CalendarBase extends StatelessWidget {
+  static Key dateAsKey(DateTime date) {
+    return Key('${date.day}${date.month}${date.year}');
+  }
+
   final DateTime? initialDate;
 
   final MaterialLocalizations? localizations;

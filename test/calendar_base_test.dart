@@ -196,6 +196,12 @@ void main() {
       ));
       expect(find.textContaining(prefix), findsAtLeastNWidgets(29));
     });
+
+    test('Returns key from date', () {
+      final date = _today();
+      final expected = Key('${date.day}${date.month}${date.year}');
+      expect(CalendarBase.dateAsKey(date), expected);
+    });
   });
 }
 
