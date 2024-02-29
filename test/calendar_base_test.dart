@@ -183,6 +183,19 @@ void main() {
       final firstMonthOnSecondRow = DateUtils.addMonthsToMonthDate(testDate, expectedColumns);
       expect(find.text(_localizations.formatMonthYear(firstMonthOnSecondRow)), findsOneWidget);
     });
+
+    testWidgets('Uses day builder', (widgetTester) async {
+      const prefix = '###';
+      await widgetTester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: CalendarBase(
+          dayBuilder: (context, dateTime) => Text(
+            '$prefix${dateTime.day}',
+          ),
+        ),
+      ));
+      expect(find.textContaining(prefix), findsAtLeastNWidgets(29));
+    });
   });
 }
 

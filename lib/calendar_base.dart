@@ -22,6 +22,8 @@ class CalendarBase extends StatelessWidget {
 
   final double minVerticalSpacing;
 
+  final DateToWidgetBuilder? dayBuilder;
+
   const CalendarBase(
       {super.key,
       this.initialDate,
@@ -29,7 +31,8 @@ class CalendarBase extends StatelessWidget {
       this.minMonthViewWidth = 200.0,
       this.maxMonthViewWidth = 400.0,
       this.minHorizontalSpacing = 8.0,
-      this.minVerticalSpacing = 8.0});
+      this.minVerticalSpacing = 8.0,
+      this.dayBuilder});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,7 @@ class CalendarBase extends StatelessWidget {
       minVerticalSpacing: minVerticalSpacing,
       initialDate: DateUtils.dateOnly(initialDate ?? DateTime.now()),
       localizations: localizations ?? const DefaultMaterialLocalizations(),
+      dayBuilder: dayBuilder,
       child: IndexedListView.builder(
           controller: IndexedScrollController(),
           itemBuilder: (indexedListViewContext, index) {
