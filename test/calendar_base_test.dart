@@ -197,6 +197,19 @@ void main() {
       expect(find.textContaining(prefix), findsAtLeastNWidgets(29));
     });
 
+    testWidgets('Uses month name builder', (widgetTester) async {
+      const prefix = '###';
+      await widgetTester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: CalendarBase(
+          monthNameBuilder: (context, dateTime) => const Text(
+            prefix,
+          ),
+        ),
+      ));
+      expect(find.textContaining(prefix), findsAtLeastNWidgets(1));
+    });
+
     test('Returns key from date', () {
       final date = _today();
       final expected = Key('${date.day}${date.month}${date.year}');
