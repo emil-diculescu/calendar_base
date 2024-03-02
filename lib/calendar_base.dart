@@ -153,7 +153,7 @@ class MonthView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MonthNameView(date: date),
         WeeksInMonthView(date: date),
