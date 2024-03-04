@@ -178,4 +178,43 @@ class MockBuilders extends _i1.Mock implements _i3.Builders {
           ),
         ),
       ) as _i2.Widget);
+
+  @override
+  _i2.Widget monthBackgroundBuilder(
+    _i2.BuildContext? context,
+    DateTime? date,
+    _i2.Widget? child,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #monthBackgroundBuilder,
+          [
+            context,
+            date,
+            child,
+          ],
+        ),
+        returnValue: _FakeWidget_0(
+          this,
+          Invocation.method(
+            #monthBackgroundBuilder,
+            [
+              context,
+              date,
+              child,
+            ],
+          ),
+        ),
+        returnValueForMissingStub: _FakeWidget_0(
+          this,
+          Invocation.method(
+            #monthBackgroundBuilder,
+            [
+              context,
+              date,
+              child,
+            ],
+          ),
+        ),
+      ) as _i2.Widget);
 }

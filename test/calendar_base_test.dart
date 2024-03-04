@@ -15,15 +15,24 @@ const _minHorizontalSpacing = 16.0;
 const _minVerticalSpacing = 16.0;
 const _stubWidget = Placeholder();
 const _surfaceHeight = 600.0;
-final _builders = MockBuilders();
+final _builders = _configuredMockBuilders();
 final _random = Random();
+
+MockBuilders _configuredMockBuilders() {
+  final result = MockBuilders();
+  const placeholder = Text('');
+  when(result.monthNameBuilder(any, any)).thenReturn(placeholder);
+  when(result.dayBuilder(any, any)).thenReturn(placeholder);
+  when(result.monthBackgroundBuilder(any, any, any)).thenReturn(placeholder);
+  when(result.weekDayNameBuilder(any, any)).thenReturn(placeholder);
+  when(result.weekNumberBuilder(any, any)).thenReturn(placeholder);
+  return result;
+}
 
 @GenerateNiceMocks([MockSpec<Builders>()])
 void main() {
   group('Day tests', () {
     final DateTime testDate = _today();
-
-    setUpAll(() => when(_builders.dayBuilder(any, any)).thenReturn(_stubWidget));
 
     testWidgets('Displays the day by default', (widgetTester) async {
       await widgetTester.pumpWidget(_widgetWithoutBuilders(Day(date: testDate)));
@@ -33,7 +42,6 @@ void main() {
     testWidgets('Calls builder, if builder is provided', (widgetTester) async {
       await widgetTester.pumpWidget(_widgetWithBuilders(Day(date: testDate)));
       verify(_builders.dayBuilder(any, testDate));
-      expect(widgetTester.widget(find.bySubtype<Placeholder>()), _stubWidget);
     });
   });
 
@@ -141,6 +149,19 @@ void main() {
       await widgetTester.pumpWidget(_widgetWithoutBuilders(MonthView(date: testDate)));
       expect(find.bySubtype<WeeksInMonthView>(), findsOneWidget);
     });
+
+    testWidgets('Calls builder, if builder is provided', (widgetTester) async {
+      final expectedChild = MonthView(date: testDate);
+      await widgetTester.pumpWidget(CalendarViewParameters(
+          initialDate: DateTime.now(),
+          localizations: _localizations,
+          monthBackgroundBuilder: _builders.monthBackgroundBuilder,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: expectedChild,
+          )));
+      verify(_builders.monthBackgroundBuilder(any, any, any));
+    });
   });
 
   group('Calendar row testing', () {
@@ -210,6 +231,17 @@ void main() {
       expect(find.textContaining(prefix), findsAtLeastNWidgets(1));
     });
 
+    testWidgets('Uses month background builder', (widgetTester) async {
+      await widgetTester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: CalendarBase(
+            monthBackgroundBuilder: (context, dateTime, child) => Card(child: child),
+          ),
+        ),
+      );
+    });
+
     test('Returns key from date', () {
       final date = _today();
       final expected = Key('${date.day}${date.month}${date.year}');
@@ -231,6 +263,8 @@ abstract class Builders {
   Widget weekDayNameBuilder(BuildContext context, String weekDayName);
 
   Widget monthNameBuilder(BuildContext context, DateTime date);
+
+  Widget monthBackgroundBuilder(BuildContext context, DateTime date, Widget child);
 }
 
 class _IndividualMonthTester {
@@ -322,6 +356,7 @@ Widget _widgetWithBuilders(Widget child) {
       weekNumberBuilder: _builders.weekNumberBuilder,
       weekDayNameBuilder: _builders.weekDayNameBuilder,
       monthNameBuilder: _builders.monthNameBuilder,
+      monthBackgroundBuilder: _builders.monthBackgroundBuilder,
       localizations: _localizations,
       minMonthViewWidth: _minColumnWidth,
       maxMonthViewWidth: _maxColumnWidth,

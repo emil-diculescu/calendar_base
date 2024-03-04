@@ -8,6 +8,7 @@ import 'package:indexed_list_view/indexed_list_view.dart';
 typedef DateToWidgetBuilder = Widget Function(BuildContext, DateTime);
 typedef IntToWidgetBuilder = Widget Function(BuildContext, int);
 typedef StringToWidgetBuilder = Widget Function(BuildContext, String);
+typedef DateToWidgetWithChildBuilder = Widget Function(BuildContext, DateTime, Widget);
 
 class CalendarBase extends StatelessWidget {
   static Key dateAsKey(DateTime date) {
@@ -30,6 +31,8 @@ class CalendarBase extends StatelessWidget {
 
   final DateToWidgetBuilder? monthNameBuilder;
 
+  final DateToWidgetWithChildBuilder? monthBackgroundBuilder;
+
   const CalendarBase(
       {super.key,
       this.initialDate,
@@ -39,7 +42,8 @@ class CalendarBase extends StatelessWidget {
       this.minHorizontalSpacing = 8.0,
       this.minVerticalSpacing = 8.0,
       this.dayBuilder,
-      this.monthNameBuilder});
+      this.monthNameBuilder,
+      this.monthBackgroundBuilder});
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +56,7 @@ class CalendarBase extends StatelessWidget {
       localizations: localizations ?? const DefaultMaterialLocalizations(),
       dayBuilder: dayBuilder,
       monthNameBuilder: monthNameBuilder,
+      monthBackgroundBuilder: monthBackgroundBuilder,
       child: IndexedListView.builder(
           controller: IndexedScrollController(),
           itemBuilder: (indexedListViewContext, index) {
@@ -79,6 +84,8 @@ class CalendarViewParameters extends InheritedWidget {
 
   final DateToWidgetBuilder? monthNameBuilder;
 
+  final DateToWidgetWithChildBuilder? monthBackgroundBuilder;
+
   final double minMonthViewWidth;
 
   final double maxMonthViewWidth;
@@ -99,6 +106,7 @@ class CalendarViewParameters extends InheritedWidget {
       this.weekNumberBuilder,
       this.weekDayNameBuilder,
       this.monthNameBuilder,
+      this.monthBackgroundBuilder,
       this.minMonthViewWidth = 200,
       this.maxMonthViewWidth = double.infinity,
       this.minHorizontalSpacing = 0,
@@ -152,7 +160,7 @@ class MonthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         MonthNameView(date: date),
@@ -162,6 +170,12 @@ class MonthView extends StatelessWidget {
         ),
       ],
     );
+    final builder = CalendarViewParameters.of(context).monthBackgroundBuilder;
+    if (builder != null) {
+      return builder(context, date, content);
+    } else {
+      return content;
+    }
   }
 }
 
