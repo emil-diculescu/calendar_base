@@ -3,10 +3,9 @@ import 'dart:math';
 import 'package:calendar_base/calendar_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'calendar_base_test.mocks.dart';
+import 'all.mocks.dart';
 
 const _localizations = DefaultMaterialLocalizations();
 const _minColumnWidth = 200.0;
@@ -29,7 +28,6 @@ MockBuilders _configuredMockBuilders() {
   return result;
 }
 
-@GenerateNiceMocks([MockSpec<Builders>()])
 void main() {
   group('Day tests', () {
     final DateTime testDate = _today();
@@ -253,18 +251,6 @@ void main() {
       expect(find.byKey(CalendarBase.dateAsKey(testDate)), findsOneWidget);
     });
   });
-}
-
-abstract class Builders {
-  Widget dayBuilder(BuildContext context, DateTime date);
-
-  Widget weekNumberBuilder(BuildContext context, int weekNumber);
-
-  Widget weekDayNameBuilder(BuildContext context, String weekDayName);
-
-  Widget monthNameBuilder(BuildContext context, DateTime date);
-
-  Widget monthBackgroundBuilder(BuildContext context, DateTime date, Widget child);
 }
 
 class _IndividualMonthTester {
