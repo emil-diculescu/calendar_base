@@ -247,8 +247,21 @@ void main() {
     });
 
     testWidgets('Day widgets have the date as key', (widgetTester) async {
-      await widgetTester.pumpWidget(_widgetWithoutBuilders(const CalendarBase()));
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(CalendarBase()));
       expect(find.byKey(CalendarBase.dateAsKey(testDate)), findsOneWidget);
+    });
+
+    testWidgets('Can scroll back to current day', (widgetTester) async {
+      final calendar = CalendarBase();
+      final target = _localizations.formatMonthYear(DateTime.now());
+      await widgetTester.pumpWidget(_widgetWithoutBuilders(calendar));
+      await widgetTester.pumpAndSettle();
+      await widgetTester.fling(find.byType(CalendarBase), const Offset(0, -400), 1600);
+      await widgetTester.pumpAndSettle();
+      expect(find.text(target), findsNothing);
+      calendar.scrollToCurrentDay();
+      await widgetTester.pumpAndSettle();
+      expect(find.text(target), findsOneWidget);
     });
   });
 }

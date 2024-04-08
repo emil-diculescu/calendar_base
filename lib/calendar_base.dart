@@ -15,6 +15,8 @@ class CalendarBase extends StatelessWidget {
     return Key('${date.day}${date.month}${date.year}');
   }
 
+  final IndexedScrollController _controller;
+
   final DateTime? initialDate;
 
   final MaterialLocalizations? localizations;
@@ -33,7 +35,7 @@ class CalendarBase extends StatelessWidget {
 
   final DateToWidgetWithChildBuilder? monthBackgroundBuilder;
 
-  const CalendarBase(
+  CalendarBase(
       {super.key,
       this.initialDate,
       this.localizations,
@@ -43,7 +45,8 @@ class CalendarBase extends StatelessWidget {
       this.minVerticalSpacing = 8.0,
       this.dayBuilder,
       this.monthNameBuilder,
-      this.monthBackgroundBuilder});
+      this.monthBackgroundBuilder})
+      : _controller = IndexedScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +61,15 @@ class CalendarBase extends StatelessWidget {
       monthNameBuilder: monthNameBuilder,
       monthBackgroundBuilder: monthBackgroundBuilder,
       child: IndexedListView.builder(
-          controller: IndexedScrollController(),
+          controller: _controller,
           itemBuilder: (indexedListViewContext, index) {
             return CalendarRow(rowIndex: index);
           }),
     );
+  }
+
+  void scrollToCurrentDay() {
+    _controller.animateTo(0.0);
   }
 }
 
