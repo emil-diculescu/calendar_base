@@ -1,6 +1,6 @@
 name: calendar_base
 description: "Customizable base widget for a calendar view."
-version: 0.5.9
+version: 0.6.0
 homepage:
 
 environment:
@@ -10,7 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   indexed_list_view: ^3.0.2
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
