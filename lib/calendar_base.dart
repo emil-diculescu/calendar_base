@@ -56,7 +56,8 @@ class CalendarBase extends StatelessWidget {
       minHorizontalSpacing: minHorizontalSpacing,
       minVerticalSpacing: minVerticalSpacing,
       initialDate: DateUtils.dateOnly(initialDate ?? DateTime.now()),
-      localizations: localizations ?? const DefaultMaterialLocalizations(),
+      localizations:
+          localizations ?? Localizations.of(context, MaterialLocalizations) ?? const DefaultMaterialLocalizations(),
       dayBuilder: dayBuilder,
       monthNameBuilder: monthNameBuilder,
       monthBackgroundBuilder: monthBackgroundBuilder,

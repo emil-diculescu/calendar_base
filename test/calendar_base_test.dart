@@ -282,6 +282,24 @@ void main() {
       await widgetTester.pumpAndSettle();
       expect(find.text(target), findsOneWidget);
     });
+
+    testWidgets('Uses inherited localizations if existing', (widgetTester) async {
+      await widgetTester.pumpWidget(MaterialApp(
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate
+        ],
+        supportedLocales: const [Locale('de')],
+        home: CalendarBase(),
+      ));
+      final calendarFinder = find.byType(CalendarViewParameters);
+      final context = widgetTester.element(calendarFinder);
+      final expectedLocalizations = MaterialLocalizations.of(context);
+      final calendarWidget = widgetTester.widget<CalendarViewParameters>(calendarFinder);
+      final actualLocalizations = calendarWidget.localizations;
+      expect(actualLocalizations, expectedLocalizations);
+    });
   });
 }
 

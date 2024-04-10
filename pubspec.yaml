@@ -1,6 +1,6 @@
 name: calendar_base
 description: "Customizable base widget for a calendar view."
-version: 0.6.0
+version: 0.6.1
 homepage:
 
 environment:
